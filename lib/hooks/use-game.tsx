@@ -1,28 +1,40 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import type { GameState } from "@/lib/game/types";
-
-const initialState: GameState = {
-  players: [],
-  rolePool: [],
-  phase: "setup",
-  nightNumber: 0,
-  log: [],
-  past: [],
-  future: [],
-};
+import { createInitialState } from "@/lib/game/setup";
+import { loadGame, saveGame } from "@/lib/game/storage";
 
 type GameContextValue = {
   state: GameState;
-  // ponytail: real reducer/autosave/undo land in P3; placeholder setter keeps the shell live.
+  // ponytail: real reducer + undo/redo snapshots land in P3; setup uses
+  // useState + pure transitions from setup.ts (a P3 reducer wraps them verbatim).
   setState: React.Dispatch<React.SetStateAction<GameState>>;
 };
 
 const GameContext = createContext<GameContextValue | null>(null);
 
 export function GameProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<GameState>(initialState);
+  const [state, setState] = useState<GameState>(createInitialState);
+
+  // Hydrate from localStorage after mount (not in the initializer — avoids
+  // SSR hydration mismatch; server and first client render agree on empty).
+  useEffect(() => {
+    const saved = loadGame();
+    if (saved) setState(saved);
+  }, []);
+
+  // Autosave on every change.
+  useEffect(() => {
+    saveGame(state);
+  }, [state]);
+
   return (
     <GameContext.Provider value={{ state, setState }}>
       {children}
