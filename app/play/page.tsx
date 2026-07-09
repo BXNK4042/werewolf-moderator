@@ -5,13 +5,14 @@ import { Lobby } from "@/components/game/lobby";
 import { StatusBar } from "@/components/game/status-bar";
 import { PlayerGrid } from "@/components/game/player-grid";
 import { NightWizard } from "@/components/game/night-wizard";
+import { WinnerScreen } from "@/components/game/winner-screen";
 import { Button } from "@/components/ui/button";
 import { useGame } from "@/lib/hooks/use-game";
 
 export default function PlayPage() {
   const { state } = useGame();
   if (state.phase === "setup") return <Lobby />;
-  if (state.phase === "gameover") return <GameOver />;
+  if (state.phase === "gameover") return <WinnerScreen />;
   if (state.phase === "night") return <NightBoard />;
   return <DayBoard />;
 }
@@ -83,22 +84,5 @@ function BottomBar({
         </Button>
       </div>
     </div>
-  );
-}
-
-function GameOver() {
-  const { state, dispatch } = useGame();
-  return (
-    <main className="mx-auto flex w-full max-w-md flex-col items-center gap-4 px-4 py-16 text-center">
-      <h1 className="text-2xl font-semibold">
-        {state.winner
-          ? `${state.winner[0].toUpperCase()}${state.winner.slice(1)} team wins`
-          : "Game over"}
-      </h1>
-      {/* ponytail: winner screen UI is P6; this is a placeholder. */}
-      <Button variant="outline" onClick={() => dispatch({ type: "resetSetup" })}>
-        New game
-      </Button>
-    </main>
   );
 }
