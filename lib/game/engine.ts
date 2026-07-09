@@ -22,12 +22,14 @@ function killSource(roleId: RoleId): "wolf" | "vampire" | "witch" | "hunter" {
   return "hunter";
 }
 
+const MAX_LOG = 200;
+
 const withLog = (state: GameState, text: string): GameState => ({
   ...state,
   log: [
     ...state.log,
     { night: state.nightNumber, phase: state.phase, text, at: Date.now() },
-  ],
+  ].slice(-MAX_LOG),
 });
 
 // --- Dealing --------------------------------------------------------------
@@ -417,6 +419,17 @@ function selfCheck() {
   dawn = resolveDawn(night);
   assert(find(dawn, "v").alive, "diseased wolves skip the kill");
   assert(!find(dawn, "w").effects.some((e) => e.type === "diseased"), "sickness clears");
+
+  // resolveDawn: a `view` outcome (Seer etc.) is info-only — target untouched.
+  night = {
+    ...base([mkPlayer("s", "seer"), mkPlayer("v", "villager")]),
+    nightQueue: queueWith([
+      { playerId: "s", roleId: "seer", prompt: "", outcome: { kind: "view", targetIds: ["v"] } },
+    ]),
+  };
+  dawn = resolveDawn(night);
+  assert(find(dawn, "v").alive, "view target survives");
+  assert(find(dawn, "v").effects.length === 0, "view adds no effects");
 
   // recordDayDeath + heartbreak cascade: lynching a Soulmate kills the partner.
   const linked = (id: string, partner: string): Player => ({

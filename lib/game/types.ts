@@ -79,15 +79,18 @@ export interface GameState {
   nightQueue?: NightQueue;
 }
 
-// A recorded outcome for one night-queue step. Every mechanical kind carries a
-// list of target ids (wolves kill 1, or 2 if a Wolf Cub died; cupid links 2);
-// `note` is info-only (Seer/Sorcerer/Aura result, Minion reveal, etc.).
+// A recorded outcome for one night-queue step. Mechanical kinds carry a list of
+// target ids (wolves kill 1, or 2 if a Wolf Cub died; cupid links 2). `view` is
+// a targeted info-only look (Seer/Sorcerer/Aura point at someone; the moderator
+// announces the result aloud — nothing changes at dawn). `note` is free text
+// for info with no target (Ghost message, Minion reveal, Cursed learn-if-turned).
 export type NightOutcome =
   | { kind: "none" }
   | { kind: "kill"; targetIds: string[] }
   | { kind: "protect"; targetIds: string[] }
   | { kind: "convert"; targetIds: string[] }
   | { kind: "link"; targetIds: [string, string] }
+  | { kind: "view"; targetIds: string[] }
   | { kind: "note"; text: string };
 
 export interface NightStep {

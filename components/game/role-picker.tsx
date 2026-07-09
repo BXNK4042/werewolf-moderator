@@ -8,22 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { countRole } from "@/lib/game/setup";
 import { useGame } from "@/lib/hooks/use-game";
-
-const TEAM_ORDER: Team[] = ["village", "werewolf", "vampire", "cult", "neutral"];
-const TEAM_LABEL: Record<Team, string> = {
-  village: "Village",
-  werewolf: "Werewolves",
-  vampire: "Vampires",
-  cult: "Cult",
-  neutral: "Neutral",
-};
-const TEAM_DOT: Record<Team, string> = {
-  village: "bg-emerald-500",
-  werewolf: "bg-red-500",
-  vampire: "bg-purple-500",
-  cult: "bg-amber-500",
-  neutral: "bg-zinc-400",
-};
+import { TEAM_ORDER, TEAM_LABEL, TEAM_DOT } from "@/lib/game/team-style";
 
 export function RolePicker() {
   return (

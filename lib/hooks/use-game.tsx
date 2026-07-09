@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
   type ReactNode,
 } from "react";
@@ -34,8 +35,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     saveGame(state);
   }, [state]);
 
+  const value = useMemo(() => ({ state, dispatch }), [state]);
+
   return (
-    <GameContext.Provider value={{ state, dispatch }}>
+    <GameContext.Provider value={value}>
       {children}
     </GameContext.Provider>
   );

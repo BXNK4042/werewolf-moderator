@@ -47,11 +47,19 @@ export type Action =
   // --- hydrate from localStorage on mount (no snapshot) ---
   | { type: "hydrate"; state: GameState };
 
-// State is treated immutably everywhere, so storing the pre-state reference in
-// `past` is safe — nothing mutates it after the fact.
+const MAX_HISTORY = 100;
+
+// Strip history arrays from a state before storing it as a snapshot.
+// Without this, each snapshot nests the full previous state (including its own
+// `past`), making JSON.stringify expand the DAG exponentially — 2^N by action count.
+const slim = (s: GameState): GameState => {
+  const { past, future, ...rest } = s;
+  return { ...rest, past: [], future: [] };
+};
+
 const commit = (pre: GameState, post: GameState, label: string): GameState => ({
   ...post,
-  past: [...pre.past, { label, state: pre, at: Date.now() }],
+  past: [...pre.past, { label, state: slim(pre), at: Date.now() }].slice(-MAX_HISTORY),
   future: [],
 });
 
@@ -175,7 +183,7 @@ export function reducer(state: GameState, action: Action): GameState {
         ...prev.state,
         past: state.past.slice(0, -1),
         future: [
-          { label: "current", state, at: Date.now() },
+          { label: "current", state: slim(state), at: Date.now() },
           ...state.future,
         ],
       };
@@ -185,7 +193,7 @@ export function reducer(state: GameState, action: Action): GameState {
       const next = state.future[0];
       return {
         ...next.state,
-        past: [...state.past, { label: next.label, state, at: Date.now() }],
+        past: [...state.past, { label: next.label, state: slim(state), at: Date.now() }],
         future: state.future.slice(1),
       };
     }
