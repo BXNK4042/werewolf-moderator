@@ -1,6 +1,6 @@
 "use client";
 
-import { Minus, Plus } from "lucide-react";
+import { Check, Minus } from "lucide-react";
 import { ROLE_LIST, getRole } from "@/lib/game/roles";
 import type { RoleId, Team } from "@/lib/game/types";
 import { Button } from "@/components/ui/button";
@@ -8,70 +8,129 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { countRole } from "@/lib/game/setup";
 import { useGame } from "@/lib/hooks/use-game";
-import { TEAM_ORDER, TEAM_LABEL, TEAM_DOT } from "@/lib/game/team-style";
+import {
+  TEAM_ORDER,
+  TEAM_LABEL,
+  TEAM_DOT,
+  TEAM_RING,
+} from "@/lib/game/team-style";
+import { roleArt } from "@/lib/game/role-art";
 
 export function RolePicker() {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-3">
       {TEAM_ORDER.map((team) => {
-        const roles = ROLE_LIST.filter((r) => r.team === team);
-        return <TeamGroup key={team} team={team} roles={roles.map((r) => r.id)} />;
+        const roleIds = ROLE_LIST.filter((r) => r.team === team).map(
+          (r) => r.id,
+        );
+        return <TeamSection key={team} team={team} roleIds={roleIds} />;
       })}
     </div>
   );
 }
 
-function TeamGroup({ team, roles }: { team: Team; roles: RoleId[] }) {
+function TeamSection({
+  team,
+  roleIds,
+}: {
+  team: Team;
+  roleIds: RoleId[];
+}) {
   const { state } = useGame();
-  const teamCount = roles.reduce((sum, id) => sum + countRole(state, id), 0);
+  const teamCount = roleIds.reduce(
+    (sum, id) => sum + countRole(state, id),
+    0,
+  );
   return (
-    // ponytail: native <details> — free toggle, keyboard, a11y; no JS lib.
-    <details open={team === "village" || team === "werewolf"} className="rounded-lg bg-card ring-1 ring-foreground/10">
-      <summary className="flex cursor-pointer list-none items-center justify-between px-3 py-2 text-sm font-medium [&::-webkit-details-marker]:hidden">
-        <span className="flex items-center gap-2">
+    <section className="flex flex-col gap-1.5">
+      <h3 className="sticky top-0 z-[1] flex items-center justify-between bg-background/95 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground backdrop-blur">
+        <span className="flex items-center gap-1.5">
           <span className={cn("size-2 rounded-full", TEAM_DOT[team])} />
           {TEAM_LABEL[team]}
         </span>
         <Badge variant="secondary">{teamCount}</Badge>
-      </summary>
-      <div className="flex flex-col border-t border-border">
-        {roles.map((id) => (
-          <RoleRow key={id} roleId={id} />
+      </h3>
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-5">
+        {roleIds.map((id) => (
+          <RoleTile key={id} roleId={id} team={team} />
         ))}
       </div>
-    </details>
+    </section>
   );
 }
 
-function RoleRow({ roleId }: { roleId: RoleId }) {
+function RoleTile({ roleId, team }: { roleId: RoleId; team: Team }) {
   const { state, dispatch } = useGame();
   const count = countRole(state, roleId);
   const role = getRole(roleId);
+  const art = roleArt(roleId);
+  const selected = count > 0;
+
   return (
-    <div className="flex items-center justify-between gap-2 px-3 py-1.5">
-      <span className="truncate text-sm" title={role.description}>
-        {role.name}
-      </span>
-      <div className="flex items-center gap-1">
-        <Button
-          size="icon-sm"
-          variant="outline"
-          aria-label={`Remove ${role.name}`}
-          disabled={count === 0}
-          onClick={() => dispatch({ type: "removeRole", roleId })}
-        >
-          <Minus />
-        </Button>
-        <span className="w-5 text-center text-sm tabular-nums">{count}</span>
-        <Button
-          size="icon-sm"
-          variant="outline"
-          aria-label={`Add ${role.name}`}
-          onClick={() => dispatch({ type: "addRole", roleId })}
-        >
-          <Plus />
-        </Button>
+    <div
+      role="button"
+      tabIndex={0}
+      title={role.description}
+      aria-label={`${role.name}, count ${count}, tap to add`}
+      onClick={() => dispatch({ type: "addRole", roleId })}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          dispatch({ type: "addRole", roleId });
+        }
+      }}
+      className={cn(
+        "group relative aspect-[3/4] cursor-pointer select-none overflow-hidden rounded-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        selected
+          ? cn("ring-2", TEAM_RING[team])
+          : "ring-1 ring-foreground/10 hover:ring-foreground/25",
+      )}
+    >
+      {art ? (
+        // ponytail: native <img> over next/image — local-only tool, 26 small
+        // PNGs, no loader config; swap if bundle/optimization ever matters.
+        <img
+          src={art}
+          alt={role.name}
+          loading="lazy"
+          className="absolute inset-0 size-full object-cover transition-transform duration-200 group-hover:scale-105"
+        />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted">
+          <span className="text-2xl font-semibold text-muted-foreground">
+            {role.name.charAt(0)}
+          </span>
+        </div>
+      )}
+
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent px-1.5 pb-1 pt-4">
+        <span className="line-clamp-1 text-xs font-medium text-white">
+          {role.name}
+        </span>
       </div>
+
+      {selected && (
+        <span className="absolute right-1 top-1 flex items-center gap-0.5 rounded-full bg-primary px-1.5 py-0.5 text-[0.65rem] font-semibold tabular-nums text-primary-foreground shadow">
+          <Check className="size-2.5" /> {count}
+        </span>
+      )}
+
+      <Button
+        size="icon-xs"
+        variant="secondary"
+        disabled={count === 0}
+        aria-label={`Remove ${role.name}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          dispatch({ type: "removeRole", roleId });
+        }}
+        className={cn(
+          "absolute bottom-1 left-1 size-5 rounded-full shadow transition-opacity",
+          count > 0 ? "opacity-100" : "pointer-events-none opacity-0",
+        )}
+      >
+        <Minus />
+      </Button>
     </div>
   );
 }

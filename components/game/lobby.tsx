@@ -35,7 +35,7 @@ export function Lobby() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-md px-4 pb-32 pt-4">
+    <div className="mx-auto w-full max-w-2xl px-4 pb-32 pt-4">
       <Link
         href="/"
         className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "-ml-2 mb-2")}
@@ -123,7 +123,7 @@ export function Lobby() {
       </section>
 
       <div className="fixed inset-x-0 bottom-0 z-10 border-t border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-md flex-col gap-2 px-4 py-3">
+        <div className="mx-auto flex w-full max-w-2xl flex-col gap-2 px-4 py-3">
           <div className="flex items-center justify-between">
             <span
               className={cn(

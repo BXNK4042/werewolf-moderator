@@ -23,3 +23,11 @@ export const TEAM_DOT: Record<Team, string> = {
   cult: "bg-amber-500",
   neutral: "bg-zinc-400",
 };
+
+export const TEAM_RING: Record<Team, string> = {
+  village: "ring-emerald-500",
+  werewolf: "ring-red-500",
+  vampire: "ring-purple-500",
+  cult: "ring-amber-500",
+  neutral: "ring-zinc-400",
+};
