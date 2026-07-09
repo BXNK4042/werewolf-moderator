@@ -1,20 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGame } from "@/lib/hooks/use-game";
-import { loadGame } from "@/lib/game/storage";
 
 export default function Home() {
   const router = useRouter();
   const { dispatch } = useGame();
-  const [hasSaved, setHasSaved] = useState(false);
-
-  useEffect(() => {
-    setHasSaved(loadGame() !== null);
-  }, []);
 
   const newGame = () => {
     dispatch({ type: "resetSetup" });
@@ -40,7 +33,6 @@ export default function Home() {
           size="lg"
           variant="outline"
           onClick={() => router.push("/play")}
-          disabled={!hasSaved}
         >
           Continue
         </Button>

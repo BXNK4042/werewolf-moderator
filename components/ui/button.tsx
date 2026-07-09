@@ -44,11 +44,17 @@ function Button({
   className,
   variant = "default",
   size = "default",
+  disabled,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
   return (
     <ButtonPrimitive
       data-slot="button"
+      disabled={disabled}
+      // ponytail: Base UI's native `disabled` desyncs under React 19 SSR
+      // hydration (data-disabled matches fine); suppress so React keeps the
+      // server-rendered attr instead of erroring. Remove if Base UI fixes it.
+      suppressHydrationWarning={disabled}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />
