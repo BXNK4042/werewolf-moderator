@@ -1,9 +1,12 @@
 "use client";
 
-import { Moon, Skull, Sparkles, Sunrise } from "lucide-react";
+import { useState } from "react";
+import { History, Moon, Redo2, Skull, Sparkles, Sunrise, Undo2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useGame } from "@/lib/hooks/use-game";
+import { TimelineDrawer } from "@/components/game/timeline-drawer";
 import { getRole } from "@/lib/game/roles";
 import { checkWinner } from "@/lib/game/win-conditions";
 import { TEAM_DOT, TEAM_LABEL, TEAM_ORDER } from "@/lib/game/team-style";
@@ -45,7 +48,8 @@ function winReadout(state: GameState) {
 }
 
 export function StatusBar() {
-  const { state } = useGame();
+  const { state, dispatch } = useGame();
+  const [timelineOpen, setTimelineOpen] = useState(false);
   const isNight = state.phase === "night";
   const alive = state.players.filter((p) => p.alive).length;
   const total = state.players.length;
@@ -65,6 +69,7 @@ export function StatusBar() {
   const tannerWon = checkWinner(state).sideWins.includes("tanner");
 
   return (
+    <>
     <header
       className={cn(
         "sticky top-0 z-20 border-b border-border backdrop-blur",
@@ -78,6 +83,32 @@ export function StatusBar() {
             {isNight ? "Night" : "Day"} {state.nightNumber}
           </span>
           <div className="flex items-center gap-1.5">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              disabled={state.past.length === 0}
+              onClick={() => dispatch({ type: "undo" })}
+              aria-label="Undo"
+            >
+              <Undo2 className="size-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              disabled={state.future.length === 0}
+              onClick={() => dispatch({ type: "redo" })}
+              aria-label="Redo"
+            >
+              <Redo2 className="size-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setTimelineOpen(true)}
+              aria-label="History"
+            >
+              <History className="size-4" />
+            </Button>
             {isNight && pending > 0 && (
               <Badge variant="secondary" className="gap-1">
                 <Sparkles className="size-3" /> {pending} pending
@@ -127,5 +158,7 @@ export function StatusBar() {
         )}
       </div>
     </header>
+    <TimelineDrawer open={timelineOpen} onOpenChange={setTimelineOpen} />
+    </>
   );
 }
