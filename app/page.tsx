@@ -5,12 +5,11 @@ import { useRouter } from "next/navigation";
 import { Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGame } from "@/lib/hooks/use-game";
-import { resetSetup } from "@/lib/game/setup";
 import { loadGame } from "@/lib/game/storage";
 
 export default function Home() {
   const router = useRouter();
-  const { setState } = useGame();
+  const { dispatch } = useGame();
   const [hasSaved, setHasSaved] = useState(false);
 
   useEffect(() => {
@@ -18,7 +17,7 @@ export default function Home() {
   }, []);
 
   const newGame = () => {
-    setState(resetSetup());
+    dispatch({ type: "resetSetup" });
     router.push("/play");
   };
 

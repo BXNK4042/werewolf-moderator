@@ -17,19 +17,12 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useGame } from "@/lib/hooks/use-game";
-import {
-  addPlayer,
-  movePlayer,
-  removePlayer,
-  renamePlayer,
-  validateSetup,
-} from "@/lib/game/setup";
+import { validateSetup } from "@/lib/game/setup";
 import { RolePicker } from "./role-picker";
 
 export function Lobby() {
-  const { state, setState } = useGame();
+  const { state, dispatch } = useGame();
   const [draft, setDraft] = useState("");
-  const [started, setStarted] = useState(false);
 
   const { players, rolePool } = state;
   const { errors, warnings } = validateSetup(state);
@@ -37,27 +30,9 @@ export function Lobby() {
 
   const submitPlayer = () => {
     if (!draft.trim()) return;
-    setState((s) => addPlayer(s, draft));
+    dispatch({ type: "addPlayer", name: draft });
     setDraft("");
   };
-
-  if (started && canStart) {
-    // ponytail: P3 swaps this confirmation for the real deal + setup→night1.
-    return (
-      <div className="mx-auto flex w-full max-w-md flex-col items-center gap-4 px-4 py-16 text-center">
-        <div className="flex size-12 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400">
-          <Check className="size-6" />
-        </div>
-        <h1 className="text-xl font-semibold">Setup complete</h1>
-        <p className="text-sm text-muted-foreground">
-          Players and roles are locked in and saved. Night 1 begins the game.
-        </p>
-        <Button variant="outline" onClick={() => setStarted(false)}>
-          <ArrowLeft /> Back to setup
-        </Button>
-      </div>
-    );
-  }
 
   return (
     <div className="mx-auto w-full max-w-md px-4 pb-32 pt-4">
@@ -81,7 +56,7 @@ export function Lobby() {
               <Input
                 value={p.name}
                 onChange={(e) =>
-                  setState((s) => renamePlayer(s, p.id, e.target.value))
+                  dispatch({ type: "renamePlayer", id: p.id, name: e.target.value })
                 }
                 className="flex-1"
                 aria-label={`Player ${i + 1} name`}
@@ -90,7 +65,7 @@ export function Lobby() {
                 size="icon-sm"
                 variant="ghost"
                 disabled={i === 0}
-                onClick={() => setState((s) => movePlayer(s, p.id, -1))}
+                onClick={() => dispatch({ type: "movePlayer", id: p.id, dir: -1 })}
                 aria-label={`Move ${p.name} up`}
               >
                 <ChevronUp />
@@ -99,7 +74,7 @@ export function Lobby() {
                 size="icon-sm"
                 variant="ghost"
                 disabled={i === players.length - 1}
-                onClick={() => setState((s) => movePlayer(s, p.id, 1))}
+                onClick={() => dispatch({ type: "movePlayer", id: p.id, dir: 1 })}
                 aria-label={`Move ${p.name} down`}
               >
                 <ChevronDown />
@@ -107,7 +82,7 @@ export function Lobby() {
               <Button
                 size="icon-sm"
                 variant="ghost"
-                onClick={() => setState((s) => removePlayer(s, p.id))}
+                onClick={() => dispatch({ type: "removePlayer", id: p.id })}
                 aria-label={`Remove ${p.name}`}
               >
                 <X />
@@ -158,7 +133,7 @@ export function Lobby() {
             >
               {rolePool.length} roles / {players.length} players
             </span>
-            <Button disabled={!canStart} onClick={() => setStarted(true)}>
+            <Button disabled={!canStart} onClick={() => dispatch({ type: "startGame" })}>
               <Check /> Start
             </Button>
           </div>

@@ -4,30 +4,29 @@ import {
   createContext,
   useContext,
   useEffect,
-  useState,
+  useReducer,
   type ReactNode,
 } from "react";
 import type { GameState } from "@/lib/game/types";
 import { createInitialState } from "@/lib/game/setup";
 import { loadGame, saveGame } from "@/lib/game/storage";
+import { reducer, type Action } from "@/lib/game/reducer";
 
 type GameContextValue = {
   state: GameState;
-  // ponytail: real reducer + undo/redo snapshots land in P3; setup uses
-  // useState + pure transitions from setup.ts (a P3 reducer wraps them verbatim).
-  setState: React.Dispatch<React.SetStateAction<GameState>>;
+  dispatch: React.Dispatch<Action>;
 };
 
 const GameContext = createContext<GameContextValue | null>(null);
 
 export function GameProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<GameState>(createInitialState);
+  const [state, dispatch] = useReducer(reducer, undefined, createInitialState);
 
   // Hydrate from localStorage after mount (not in the initializer — avoids
   // SSR hydration mismatch; server and first client render agree on empty).
   useEffect(() => {
     const saved = loadGame();
-    if (saved) setState(saved);
+    if (saved) dispatch({ type: "hydrate", state: saved });
   }, []);
 
   // Autosave on every change.
@@ -36,7 +35,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, [state]);
 
   return (
-    <GameContext.Provider value={{ state, setState }}>
+    <GameContext.Provider value={{ state, dispatch }}>
       {children}
     </GameContext.Provider>
   );

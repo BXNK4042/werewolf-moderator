@@ -6,7 +6,7 @@ import type { RoleId, Team } from "@/lib/game/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { addRole, countRole, removeRole } from "@/lib/game/setup";
+import { countRole } from "@/lib/game/setup";
 import { useGame } from "@/lib/hooks/use-game";
 
 const TEAM_ORDER: Team[] = ["village", "werewolf", "vampire", "cult", "neutral"];
@@ -59,7 +59,7 @@ function TeamGroup({ team, roles }: { team: Team; roles: RoleId[] }) {
 }
 
 function RoleRow({ roleId }: { roleId: RoleId }) {
-  const { state, setState } = useGame();
+  const { state, dispatch } = useGame();
   const count = countRole(state, roleId);
   const role = getRole(roleId);
   return (
@@ -73,7 +73,7 @@ function RoleRow({ roleId }: { roleId: RoleId }) {
           variant="outline"
           aria-label={`Remove ${role.name}`}
           disabled={count === 0}
-          onClick={() => setState((s) => removeRole(s, roleId))}
+          onClick={() => dispatch({ type: "removeRole", roleId })}
         >
           <Minus />
         </Button>
@@ -82,7 +82,7 @@ function RoleRow({ roleId }: { roleId: RoleId }) {
           size="icon-sm"
           variant="outline"
           aria-label={`Add ${role.name}`}
-          onClick={() => setState((s) => addRole(s, roleId))}
+          onClick={() => dispatch({ type: "addRole", roleId })}
         >
           <Plus />
         </Button>

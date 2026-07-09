@@ -41,8 +41,12 @@ export function checkWinner(state: GameState): WinResult {
     return { winner: "village", sideWins };
   }
   // ponytail: not yet decidable — Lone Wolf override (l.157), Hoodlum marks
-  // (l.153) and Cupid soulmate override (l.141) need first-night target +
-  // lover-link data wired in P3; re-checked there each resolution.
+  // (l.153), and the Cupid soulmate pair-win (l.141 — Soulmates on different
+  // teams win as the last two, overriding other conditions) need first-night
+  // target / lover-link-pair data. The heartbreak cascade (one Soulmate dies
+  // → the other dies) is handled in engine.ts applyDeaths before this runs, so
+  // team composition here already reflects it. Revisit pair-win + Lone Wolf +
+  // Hoodlum once those roles' rules are confirmed from the Deluxe rulebook.
   return { sideWins };
 }
 

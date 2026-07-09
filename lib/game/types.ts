@@ -33,7 +33,9 @@ export interface Role {
 }
 
 export type EffectType =
-  | "protected" | "diseased" | "cursed" | "amulet" | "lover-link" | "cult";
+  | "protected" | "diseased" | "cursed" | "amulet" | "lover-link" | "cult"
+  // once-per-game usage flags (live on the acting player):
+  | "witch-heal-used" | "witch-kill-used";
 
 export interface Effect {
   type: EffectType;
@@ -72,4 +74,30 @@ export interface GameState {
   past: Snapshot[];
   future: Snapshot[];
   winner?: Team;
+  // Present only during phase==="night". Lives in state so a mid-night refresh
+  // survives autosave and undo reaches inside a night.
+  nightQueue?: NightQueue;
+}
+
+// A recorded outcome for one night-queue step. Every mechanical kind carries a
+// list of target ids (wolves kill 1, or 2 if a Wolf Cub died; cupid links 2);
+// `note` is info-only (Seer/Sorcerer/Aura result, Minion reveal, etc.).
+export type NightOutcome =
+  | { kind: "none" }
+  | { kind: "kill"; targetIds: string[] }
+  | { kind: "protect"; targetIds: string[] }
+  | { kind: "convert"; targetIds: string[] }
+  | { kind: "link"; targetIds: [string, string] }
+  | { kind: "note"; text: string };
+
+export interface NightStep {
+  playerId: string; // real player id, or a synthetic group id ("__wolves")
+  roleId: RoleId; // the role whose prompt this step shows
+  prompt: string;
+  outcome?: NightOutcome; // undefined until the moderator records it
+}
+
+export interface NightQueue {
+  steps: NightStep[]; // ordered, freely reorderable
+  cursor: number; // index of the current step
 }
