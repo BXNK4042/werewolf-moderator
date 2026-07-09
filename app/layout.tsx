@@ -14,9 +14,26 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Werewolf Moderator",
+  metadataBase: new URL("https://werewolf-moderator.vercel.app"),
+  title: {
+    default: "Werewolf Moderator",
+    template: "%s · Werewolf Moderator",
+  },
   description:
     "A local moderator tool for Werewolf: Ultimate Deluxe Edition.",
+  applicationName: "Werewolf Moderator",
+  openGraph: {
+    title: "Werewolf Moderator",
+    description:
+      "A local moderator tool for Werewolf: Ultimate Deluxe Edition.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Werewolf Moderator",
+    description:
+      "A local moderator tool for Werewolf: Ultimate Deluxe Edition.",
+  },
 };
 
 export const viewport: Viewport = {

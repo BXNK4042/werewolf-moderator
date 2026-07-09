@@ -6,6 +6,7 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
+  SheetDescription,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -62,10 +63,10 @@ function Body({ player }: { player: Player }) {
               {live.name}
             </span>
           </SheetTitle>
-          <p className="text-xs text-muted-foreground">
+          <SheetDescription className="text-xs">
             {role ? `${role.name} · ${TEAM_LABEL[role.team]}` : "No role"}
             {!live.alive && live.diedAt && ` · died N${live.diedAt.night} (${live.diedAt.cause})`}
-          </p>
+          </SheetDescription>
         </div>
         <Badge variant={live.alive ? "secondary" : "outline"}>
           {live.alive ? "Alive" : "Dead"}
@@ -188,6 +189,7 @@ function Body({ player }: { player: Player }) {
               })
             }
             title="Clear protections"
+            aria-label="Clear protections"
           >
             <RotateCcw className="size-3.5" />
           </Button>

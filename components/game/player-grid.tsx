@@ -17,7 +17,7 @@ export function PlayerGrid({ dayMode }: { dayMode?: boolean }) {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
         {state.players.map((p, i) => (
           <PlayerCard
             key={p.id}

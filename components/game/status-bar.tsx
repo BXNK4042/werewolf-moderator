@@ -76,13 +76,13 @@ export function StatusBar() {
         isNight ? "bg-night-tint/60" : "bg-day-tint/60",
       )}
     >
-      <div className="mx-auto flex w-full max-w-md flex-col gap-1.5 px-3 py-2">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-1.5 px-3 py-2">
         <div className="flex items-center justify-between gap-2">
           <span className="flex items-center gap-1.5 text-sm font-semibold">
             {isNight ? <Moon className="size-4" /> : <Sunrise className="size-4" />}
             {isNight ? "Night" : "Day"} {state.nightNumber}
           </span>
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-end gap-1.5">
             <Button
               variant="ghost"
               size="icon-sm"
@@ -109,14 +109,21 @@ export function StatusBar() {
             >
               <History className="size-4" />
             </Button>
-            {isNight && pending > 0 && (
+            <span
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              className="flex items-center gap-1.5"
+            >
+              {isNight && pending > 0 && (
+                <Badge variant="secondary" className="gap-1">
+                  <Sparkles className="size-3" /> {pending} pending
+                </Badge>
+              )}
               <Badge variant="secondary" className="gap-1">
-                <Sparkles className="size-3" /> {pending} pending
+                <Skull className="size-3" /> {total - alive}/{total}
               </Badge>
-            )}
-            <Badge variant="secondary" className="gap-1">
-              <Skull className="size-3" /> {total - alive}/{total}
-            </Badge>
+            </span>
           </div>
         </div>
 

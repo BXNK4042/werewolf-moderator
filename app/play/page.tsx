@@ -22,7 +22,7 @@ function NightBoard() {
   return (
     <>
       <StatusBar />
-      <main className="mx-auto w-full max-w-md px-3 pb-28 pt-4">
+      <main className="mx-auto w-full max-w-2xl animate-in fade-in duration-300 px-3 pb-28 pt-4">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Night actions
         </h2>
@@ -47,7 +47,7 @@ function DayBoard() {
   return (
     <>
       <StatusBar />
-      <main className="mx-auto w-full max-w-md px-3 pb-28 pt-4">
+      <main className="mx-auto w-full max-w-2xl animate-in fade-in duration-300 px-3 pb-28 pt-4">
         <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {day1 ? "Day 1 — discussion (no vote)" : "Players — tap to eliminate"}
         </h2>
@@ -73,7 +73,7 @@ function BottomBar({
 }) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-10 border-t border-border bg-background/95 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-md items-center justify-between gap-2 px-4 py-3">
+      <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-2 px-4 py-3">
         {sub ? (
           <span className="text-xs text-muted-foreground">{sub}</span>
         ) : (

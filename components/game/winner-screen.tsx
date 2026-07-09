@@ -47,7 +47,11 @@ export function WinnerScreen() {
   return (
     <main className="mx-auto flex w-full max-w-md flex-col gap-5 px-4 py-8">
       {/* Banner */}
-      <section className="flex flex-col items-center gap-2 rounded-xl bg-card p-6 text-center ring-1 ring-foreground/10">
+      <section
+        role="status"
+        aria-live="assertive"
+        className="flex animate-in fade-in duration-500 flex-col items-center gap-2 rounded-xl bg-card p-6 text-center ring-1 ring-foreground/10"
+      >
         <Trophy
           className={cn(
             "size-10",

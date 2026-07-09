@@ -88,7 +88,11 @@ function Wizard({ steps, alive }: { steps: NightStep[]; alive: Player[] }) {
 
   return (
     <section className="mt-3 flex flex-col gap-3">
-      <div className="flex items-center justify-between">
+      <div
+        className="flex items-center justify-between"
+        role="status"
+        aria-live="polite"
+      >
         <Badge variant="secondary">
           Step {idx + 1} of {steps.length}
         </Badge>
@@ -213,7 +217,7 @@ function StepCard({
           onChange={(e) => setNote(e.target.value)}
         />
       ) : kind === "link" ? (
-        <div className="flex gap-1.5">
+        <div className="flex flex-col gap-1.5 sm:flex-row">
           <TargetSelect alive={alive} value={t1} onChange={setT1} />
           <TargetSelect alive={alive} value={t2} onChange={setT2} />
         </div>
@@ -300,6 +304,7 @@ function AllSteps({
           <li key={i}>
             <button
               type="button"
+              aria-current={i === current ? "step" : undefined}
               onClick={() => onJump(i)}
               className={cn(
                 "flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left",
