@@ -45,4 +45,4 @@ Almost all logic/UI is interactive, so most components are `'use client'`. Conve
 ## Commands
 - `npm run dev` — dev server
 - `npm run build` — production build (run before declaring work done)
-- No lint/typecheck script yet — when adding tooling, record the command here.
+- `npm run typecheck` — `tsc --noEmit`, run before declaring work done
