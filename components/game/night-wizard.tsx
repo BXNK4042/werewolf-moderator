@@ -147,7 +147,7 @@ function Wizard({ steps, alive }: { steps: NightStep[]; alive: Player[] }) {
       <AllSteps steps={steps} onJump={setView} current={idx} />
 
       {done && (
-        <p className="rounded-lg bg-card p-3 text-center text-xs text-muted-foreground ring-1 ring-foreground/10">
+        <p className="rounded-lg bg-card p-3 text-center text-xs text-muted-foreground shadow-elevated ring-1 ring-foreground/5">
           All actions recorded — resolve dawn below.
         </p>
       )}
@@ -196,7 +196,7 @@ function StepCard({
   const recorded = step.outcome && step.outcome.kind !== "none";
 
   return (
-    <div className="flex flex-col gap-2 rounded-lg bg-card p-3 ring-1 ring-foreground/10">
+    <div className="flex flex-col gap-2 rounded-lg bg-card p-3 shadow-elevated ring-1 ring-foreground/5">
       <div className="flex items-center justify-between gap-2">
         <span className="text-sm font-semibold">{stepLabel(step)}</span>
         {step.outcome ? (
@@ -292,7 +292,7 @@ function AllSteps({
   onJump: (i: number) => void;
 }) {
   return (
-    <details className="rounded-lg bg-card text-sm ring-1 ring-foreground/10">
+    <details className="rounded-lg bg-card text-sm shadow-elevated ring-1 ring-foreground/5">
       <summary className="flex cursor-pointer list-none items-center justify-between px-3 py-2 font-medium [&::-webkit-details-marker]:hidden">
         All steps
         <span className="text-xs text-muted-foreground">

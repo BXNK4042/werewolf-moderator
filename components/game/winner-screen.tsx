@@ -50,11 +50,11 @@ export function WinnerScreen() {
       <section
         role="status"
         aria-live="assertive"
-        className="flex animate-in fade-in duration-500 flex-col items-center gap-2 rounded-xl bg-card p-6 text-center ring-1 ring-foreground/10"
+        className="flex animate-in fade-in duration-500 flex-col items-center gap-2 rounded-xl bg-card p-6 text-center shadow-elevated-lg ring-1 ring-foreground/5"
       >
         <Trophy
           className={cn(
-            "size-10",
+            "size-10 drop-shadow-[0_0_16px_oklch(0.62_0.17_250/0.35)]",
             winner ? TEAM_TEXT[winner] : "text-muted-foreground",
           )}
         />
@@ -97,7 +97,7 @@ export function WinnerScreen() {
 
       {/* Final roster */}
       <section className="flex flex-col gap-1.5">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <h2 className="text-xs font-medium tracking-wide text-muted-foreground">
           Final roster
         </h2>
         <ul className="flex flex-col gap-1">
@@ -138,8 +138,8 @@ export function WinnerScreen() {
 
       {/* Event log */}
       {state.log.length > 0 && (
-        <details className="group rounded-lg bg-card px-3 py-2 ring-1 ring-foreground/5">
-          <summary className="cursor-pointer text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <details className="group rounded-lg bg-card px-3 py-2 shadow-elevated ring-1 ring-foreground/5">
+          <summary className="cursor-pointer text-xs font-medium tracking-wide text-muted-foreground">
             Event log ({state.log.length})
           </summary>
           <ol className="mt-2 flex max-h-64 flex-col gap-1.5 overflow-y-auto">

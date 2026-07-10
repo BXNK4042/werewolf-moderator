@@ -22,6 +22,7 @@ export const metadata: Metadata = {
   description:
     "A local moderator tool for Werewolf: Ultimate Deluxe Edition.",
   applicationName: "Werewolf Moderator",
+  icons: { icon: "/favicon.svg" },
   openGraph: {
     title: "Werewolf Moderator",
     description:
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a0a",
+  themeColor: "#10131c",
   width: "device-width",
   initialScale: 1,
 };

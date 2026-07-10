@@ -208,7 +208,7 @@ function Section({
 }) {
   return (
     <div className="border-t border-border px-4 py-3">
-      <h3 className="mb-1.5 text-[0.7rem] font-semibold uppercase tracking-wide text-muted-foreground">
+      <h3 className="mb-1.5 text-[0.7rem] font-medium tracking-wide text-muted-foreground">
         {title}
       </h3>
       {children}

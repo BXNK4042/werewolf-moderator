@@ -15,12 +15,24 @@ export default function Error({
   }, [error]);
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
-      <h1 className="text-2xl font-semibold">Something went wrong</h1>
-      <p className="text-muted-foreground">
-        An unexpected error occurred while running the game.
+    <main className="relative flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 size-80 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-40 blur-3xl"
+        style={{
+          background:
+            "radial-gradient(circle, oklch(0.65 0.19 22 / 0.12), transparent 70%)",
+        }}
+      />
+      <p className="relative text-xs font-medium tracking-wide text-destructive">
+        Something went wrong
       </p>
-      <Button onClick={() => unstable_retry()}>Try again</Button>
+      <h1 className="relative text-2xl font-semibold tracking-tight">
+        An unexpected error occurred while running the game.
+      </h1>
+      <Button className="relative h-11 px-6 text-base" onClick={() => unstable_retry()}>
+        Try again
+      </Button>
     </main>
   );
 }

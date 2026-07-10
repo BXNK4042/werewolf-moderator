@@ -23,11 +23,11 @@ function NightBoard() {
     <>
       <StatusBar />
       <main className="mx-auto w-full max-w-2xl animate-in fade-in duration-300 px-3 pb-28 pt-4">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <h2 className="text-xs font-medium tracking-wide text-muted-foreground">
           Night actions
         </h2>
         <NightWizard />
-        <h2 className="mt-5 mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <h2 className="mt-5 mb-2 text-xs font-medium tracking-wide text-muted-foreground">
           Players
         </h2>
         <PlayerGrid />
@@ -48,7 +48,7 @@ function DayBoard() {
     <>
       <StatusBar />
       <main className="mx-auto w-full max-w-2xl animate-in fade-in duration-300 px-3 pb-28 pt-4">
-        <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <h2 className="mb-2 text-xs font-medium tracking-wide text-muted-foreground">
           {day1 ? "Day 1 — discussion (no vote)" : "Players — tap to eliminate"}
         </h2>
         <PlayerGrid dayMode={!day1} />

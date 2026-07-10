@@ -45,7 +45,7 @@ export function PlayerCard({
         }
       }}
       className={cn(
-        "flex w-full cursor-pointer flex-col gap-1 rounded-lg bg-card p-2.5 text-left ring-1 ring-foreground/10 transition-all duration-300 hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "flex w-full cursor-pointer flex-col gap-1 rounded-lg bg-card p-2.5 text-left shadow-elevated ring-1 ring-foreground/5 transition-all duration-300 hover:-translate-y-0.5 hover:bg-muted/50 hover:shadow-elevated-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         !player.alive && "opacity-50",
       )}
     >

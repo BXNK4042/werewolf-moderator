@@ -82,8 +82,8 @@ function RoleTile({ roleId, team }: { roleId: RoleId; team: Team }) {
       className={cn(
         "group relative aspect-[3/4] cursor-pointer select-none overflow-hidden rounded-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         selected
-          ? cn("ring-2", TEAM_RING[team])
-          : "ring-1 ring-foreground/10 hover:ring-foreground/25",
+          ? cn("shadow-glow ring-2", TEAM_RING[team])
+          : "shadow-elevated ring-1 ring-foreground/10 hover:-translate-y-0.5 hover:ring-foreground/30",
       )}
     >
       {art ? (
