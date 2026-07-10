@@ -68,9 +68,10 @@ function Body({ player }: { player: Player }) {
             {!live.alive && live.diedAt && ` · died N${live.diedAt.night} (${live.diedAt.cause})`}
           </SheetDescription>
         </div>
+        {/*
         <Badge variant={live.alive ? "secondary" : "outline"}>
           {live.alive ? "Alive" : "Dead"}
-        </Badge>
+        </Badge>*/}
       </SheetHeader>
 
       {role && (
