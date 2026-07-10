@@ -213,8 +213,10 @@ function StepCard({
           : { kind: "kill", targetIds: [t1] },
       );
     } else {
-      if (t1)
-        onRecord({ kind, targetIds: [t1] } as NightOutcome);
+      if (t1) {
+        const isBonusKill = kind === "kill" && step.prompt.includes("TWO victims");
+        onRecord({ kind, targetIds: isBonusKill && t2 ? [t1, t2] : [t1] } as NightOutcome);
+      }
     }
   };
 
@@ -268,6 +270,11 @@ function StepCard({
                 </Button>
               </div>
               <TargetSelect alive={alive} value={t1} onChange={setT1} />
+            </div>
+          ) : kind === "kill" && step.prompt.includes("TWO victims") ? (
+            <div className="flex flex-col gap-7 sm:flex-row sm:gap-7">
+              <TargetSelect alive={alive} value={t1} onChange={setT1} />
+              <TargetSelect alive={alive.filter((p) => p.id !== t1)} value={t2} onChange={setT2} />
             </div>
           ) : (
             <TargetSelect alive={alive} value={t1} onChange={setT1} />

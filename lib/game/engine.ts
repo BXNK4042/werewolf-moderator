@@ -58,12 +58,17 @@ export function buildNightQueue(state: GameState): NightQueue {
   const others = alive.filter((p) => !grouped.has(p.id));
 
   const steps: NightStep[] = [];
-  if (wolves.length)
+  if (wolves.length) {
+    const hasBonus = wolves.some((p) => hasEffect(p, "wolf-cub-bonus") && effectAt(p, "wolf-cub-bonus")?.nightApplied === state.nightNumber - 1);
+    const prompt = hasBonus
+      ? "Werewolves: Wolf Cub died last night — choose TWO victims (not other Werewolves)."
+      : getRole("werewolf").nightAction!.prompt;
     steps.push({
       playerId: WOLVES,
       roleId: "werewolf",
-      prompt: getRole("werewolf").nightAction!.prompt,
+      prompt,
     });
+  }
   if (vampires.length)
     steps.push({
       playerId: VAMPIRES,
@@ -108,6 +113,22 @@ function applyDeaths(
   };
 
   for (const d of deaths) kill(d.id, d.cause);
+
+  // Wolf Cub bonus: if Wolf Cub died, werewolves get 2 kills next night.
+  const wolfCubDied = died.some((id) => {
+    const p = byId.get(id);
+    return p?.roleId === "wolf-cub";
+  });
+  if (wolfCubDied) {
+    for (const p of players) {
+      if (p.alive && p.roleId && PACK_WOLF_IDS.includes(p.roleId)) {
+        const existing = byId.get(p.id);
+        if (existing && !hasEffect(existing, "wolf-cub-bonus")) {
+          byId.set(p.id, addEffect(existing, "wolf-cub-bonus", night));
+        }
+      }
+    }
+  }
 
   // Heartbreak cascade: a dead Soulmate takes their partner. Loop until stable.
   let changed = true;
@@ -240,6 +261,15 @@ export function resolveDawn(state: GameState): GameState {
   if (died.some((id) => players.find((x) => x.id === id)?.roleId === "hunter")) {
     logs.push("A Hunter died — they may take a player with them (use the override).");
   }
+
+  // Clean up wolf-cub-bonus after it's used (was applied on previous night).
+  players = players.map((p) => {
+    const bonus = effectAt(p, "wolf-cub-bonus");
+    if (bonus && bonus.nightApplied === state.nightNumber - 1) {
+      return removeEffect(p, "wolf-cub-bonus");
+    }
+    return p;
+  });
 
   let next: GameState = { ...state, players, nightQueue: undefined };
 
@@ -460,6 +490,49 @@ function selfCheck() {
   flow = advancePhase(flow); // dawn kills v → village loses? 1 wolf vs 0 villagers
   // 1 wolf alive, 0 villagers → werewolves win at parity → gameover.
   assert(flow.phase === "gameover" && flow.winner === "werewolf", "wolves win at parity");
+
+  // Wolf Cub bonus: wolf-cub dies → wolves get 2 kills next night.
+  let wolfCubGame = base([
+    mkPlayer("w", "werewolf"),
+    mkPlayer("c", "wolf-cub"),
+    mkPlayer("v1", "villager"),
+    mkPlayer("v2", "villager"),
+    mkPlayer("v3", "villager"),
+    mkPlayer("v4", "villager"),
+  ], { nightNumber: 1 });
+  wolfCubGame = {
+    ...wolfCubGame,
+    nightQueue: queueWith([
+      { playerId: WOLVES, roleId: "werewolf", prompt: "", outcome: { kind: "kill", targetIds: ["v4"] } },
+    ]),
+  };
+  wolfCubGame = resolveDawn(wolfCubGame);
+  assert(find(wolfCubGame, "v4").alive === false, "v4 dies night 1");
+  // Day kill the Wolf Cub.
+  wolfCubGame = recordDayDeath(wolfCubGame, "c", "lynched");
+  assert(find(wolfCubGame, "c").alive === false, "wolf-cub dies day 1");
+  assert(hasEffect(find(wolfCubGame, "w"), "wolf-cub-bonus"), "wolf gets bonus effect");
+  // Night 2: build queue should show "TWO victims" prompt.
+  wolfCubGame = advancePhase(wolfCubGame);
+  assert(wolfCubGame.phase === "night" && wolfCubGame.nightNumber === 2, "night 2 begins");
+  const n2Queue = wolfCubGame.nightQueue!;
+  const wolvesStep = n2Queue.steps.find((st) => st.playerId === WOLVES);
+  assert(wolvesStep?.prompt?.includes("TWO victims") === true, "bonus prompt shows on night 2");
+  // Wolves kill 2 targets.
+  wolfCubGame = {
+    ...wolfCubGame,
+    nightQueue: {
+      ...n2Queue,
+      steps: n2Queue.steps.map((st) =>
+        st.playerId === WOLVES
+          ? { ...st, outcome: { kind: "kill", targetIds: ["v1", "v2"] } }
+          : st,
+      ),
+    },
+  };
+  wolfCubGame = resolveDawn(wolfCubGame);
+  assert(find(wolfCubGame, "v1").alive === false && find(wolfCubGame, "v2").alive === false, "both targets die");
+  assert(!hasEffect(find(wolfCubGame, "w"), "wolf-cub-bonus"), "bonus cleared after use");
 
   console.log("[engine] selfCheck ok");
 }

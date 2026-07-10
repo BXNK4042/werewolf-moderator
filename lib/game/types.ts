@@ -34,6 +34,7 @@ export interface Role {
 
 export type EffectType =
   | "protected" | "diseased" | "cursed" | "amulet" | "lover-link" | "cult"
+  | "wolf-cub-bonus"
   // once-per-game usage flags (live on the acting player):
   | "witch-heal-used" | "witch-kill-used";
 
