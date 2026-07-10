@@ -112,7 +112,7 @@ export function Lobby() {
         </div>
       </section>
 
-      <section className="flex flex-col gap-2">
+      <section className="mb-12 flex flex-col gap-2">
         <h2 className="flex items-center justify-between text-sm font-semibold">
           <span className="flex items-center gap-2">
             <ScrollText className="size-4" /> Roles
