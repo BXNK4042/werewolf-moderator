@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getRole } from "@/lib/game/roles";
 import { TEAM_DOT } from "@/lib/game/team-style";
+import { roleArt } from "@/lib/game/role-art";
 import type { EffectType, Player } from "@/lib/game/types";
 
 const EFFECT_BADGE: Partial<Record<EffectType, string>> = {
@@ -32,6 +33,7 @@ export function PlayerCard({
 }) {
   const role = player.roleId ? getRole(player.roleId) : null;
   const effects = player.effects.filter((e) => EFFECT_BADGE[e.type]);
+  const art = player.roleId ? roleArt(player.roleId) : null;
 
   return (
     <div
@@ -49,23 +51,38 @@ export function PlayerCard({
         !player.alive && "opacity-50",
       )}
     >
-      <div className="flex items-center justify-between gap-1">
-        <span className="flex items-center gap-1.5 min-w-0">
-          {role && (
-            <span className={cn("size-2 shrink-0 rounded-full", TEAM_DOT[role.team])} />
-          )}
-          <span className={cn("truncate text-sm font-medium", !player.alive && "line-through")}>
-            {player.name}
-          </span>
-        </span>
-        <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-          {seat}
-        </span>
-      </div>
+      <div className="flex gap-2">
+        {art && role ? (
+          <div className="relative aspect-[3/4] w-12 shrink-0 overflow-hidden rounded-md ring-1 ring-foreground/10 shadow-sm">
+            <img src={art} alt={role.name} loading="lazy" className="absolute inset-0 size-full object-cover" />
+          </div>
+        ) : (
+          <div className="flex aspect-[3/4] w-12 shrink-0 items-center justify-center rounded-md bg-muted ring-1 ring-foreground/10">
+            <span className="text-lg font-semibold text-muted-foreground">
+              {role?.name.charAt(0) ?? player.name.charAt(0)}
+            </span>
+          </div>
+        )}
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <div className="flex items-center justify-between gap-1">
+            <span className="flex items-center gap-1.5 min-w-0">
+              {role && (
+                <span className={cn("size-2 shrink-0 rounded-full", TEAM_DOT[role.team])} />
+              )}
+              <span className={cn("truncate text-sm font-medium", !player.alive && "line-through")}>
+                {player.name}
+              </span>
+            </span>
+            <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
+              {seat}
+            </span>
+          </div>
 
-      <span className="truncate text-xs text-muted-foreground">
-        {role?.name ?? "—"}
-      </span>
+          <span className="truncate text-xs text-muted-foreground">
+            {role?.name ?? "—"}
+          </span>
+        </div>
+      </div>
 
       {effects.length > 0 && (
         <div className="flex flex-wrap gap-1">
