@@ -53,7 +53,7 @@ export function PlayerCard({
     >
       <div className="flex gap-2.5">
         <div className="relative aspect-[3/4] w-20 shrink-0 overflow-hidden rounded-md ring-1 ring-foreground/10 shadow-sm">
-          {art && role ? (
+          {role && art ? (
             <img src={art} alt={role.name} loading="lazy" className="absolute inset-0 size-full object-cover" />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-muted">
@@ -104,12 +104,6 @@ export function PlayerCard({
             </span>
           ))}
         </div>
-      )}
-
-      {!player.alive && player.diedAt && (
-        <span className="text-[0.65rem] text-muted-foreground">
-          d. N{player.diedAt.night} · {player.diedAt.cause}
-        </span>
       )}
 
       {dayMode && player.alive && onEliminate && (
