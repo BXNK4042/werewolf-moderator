@@ -267,18 +267,18 @@ function TargetSelect({
   onChange: (v: string) => void;
 }) {
   return (
-    <select
-      className="flex-1 rounded border border-border bg-background px-2 py-1 text-xs"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    >
-      <option value="">— target —</option>
+    <div className="flex flex-wrap gap-1" role="group" aria-label="Target">
       {alive.map((p) => (
-        <option key={p.id} value={p.id}>
+        <Button
+          key={p.id}
+          size="xs"
+          variant={value === p.id ? "default" : "outline"}
+          onClick={() => onChange(value === p.id ? "" : p.id)}
+        >
           {p.name}
-        </option>
+        </Button>
       ))}
-    </select>
+    </div>
   );
 }
 
