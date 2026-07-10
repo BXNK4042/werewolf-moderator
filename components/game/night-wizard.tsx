@@ -77,7 +77,7 @@ function Wizard({ steps, alive }: { steps: NightStep[]; alive: Player[] }) {
 
   const record = (outcome: NightOutcome) => {
     dispatch({ type: "setNightOutcome", stepIndex: idx, outcome });
-    if (outcome.kind !== "none") goToNextPending(idx);
+    goToNextPending(idx);
   };
 
   const reorder = (dir: -1 | 1) => {
