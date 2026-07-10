@@ -29,3 +29,13 @@ export function clearGame(): void {
     // ignore
   }
 }
+
+export function clearAllData(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.removeItem("werewolf-mod:active-game");
+    window.localStorage.removeItem("werewolf-mod:history");
+  } catch {
+    // ignore
+  }
+}

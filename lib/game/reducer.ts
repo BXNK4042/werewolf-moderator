@@ -18,6 +18,7 @@ import {
   dealRoles,
   recordDayDeath,
 } from "./engine";
+import { clearAllData } from "./storage";
 
 export type Action =
   // --- setup (wrap setup.ts verbatim) ---
@@ -45,7 +46,9 @@ export type Action =
   | { type: "redo" }
   | { type: "rollback"; to: number }
   // --- hydrate from localStorage on mount (no snapshot) ---
-  | { type: "hydrate"; state: GameState };
+  | { type: "hydrate"; state: GameState }
+  // --- reset all data ---
+  | { type: "resetAll" };
 
 const MAX_HISTORY = 100;
 
@@ -208,6 +211,10 @@ export function reducer(state: GameState, action: Action): GameState {
     }
     case "hydrate":
       return action.state;
+    case "resetAll": {
+      clearAllData();
+      return commit(state, createInitialState(), "Reset all data");
+    }
     default:
       return state;
   }

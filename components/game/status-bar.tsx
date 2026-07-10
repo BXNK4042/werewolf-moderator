@@ -1,9 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { History, Moon, Redo2, Skull, Sparkles, Sunrise, Undo2 } from "lucide-react";
+import { History, Moon, Redo2, Skull, Sparkles, Sunrise, Trash2, Undo2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 import { useGame } from "@/lib/hooks/use-game";
 import { TimelineDrawer } from "@/components/game/timeline-drawer";
@@ -50,6 +60,7 @@ function winReadout(state: GameState) {
 export function StatusBar() {
   const { state, dispatch } = useGame();
   const [timelineOpen, setTimelineOpen] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
   const isNight = state.phase === "night";
   const alive = state.players.filter((p) => p.alive).length;
   const total = state.players.length;
@@ -109,6 +120,14 @@ export function StatusBar() {
             >
               <History className="size-4" />
             </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setResetOpen(true)}
+              aria-label="Reset all data"
+            >
+              <Trash2 className="size-4" />
+            </Button>
             <span
               role="status"
               aria-live="polite"
@@ -166,6 +185,28 @@ export function StatusBar() {
       </div>
     </header>
     <TimelineDrawer open={timelineOpen} onOpenChange={setTimelineOpen} />
+    <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Reset all data?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will clear the active game and all finished games. This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => {
+              dispatch({ type: "resetAll" });
+              setResetOpen(false);
+            }}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            Reset
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
     </>
   );
 }
