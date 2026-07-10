@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import { Lobby } from "@/components/game/lobby";
 import { StatusBar } from "@/components/game/status-bar";
 import { PlayerGrid } from "@/components/game/player-grid";
+import { DayTimer } from "@/components/game/day-timer";
 import { NightWizard } from "@/components/game/night-wizard";
 import { WinnerScreen } from "@/components/game/winner-screen";
 import { Button } from "@/components/ui/button";
@@ -51,6 +52,7 @@ function DayBoard() {
         <h2 className="mb-2 text-xs font-medium tracking-wide text-muted-foreground">
           {day1 ? "Day 1 — discussion (no vote)" : "Players — tap to eliminate"}
         </h2>
+        <DayTimer />
         <PlayerGrid dayMode={!day1} />
       </main>
       <BottomBar
