@@ -201,6 +201,13 @@ function StepCard({
   const [note, setNote] = useState("");
   const [witchMode, setWitchMode] = useState<"heal" | "kill">("heal");
 
+  const toggleKillTarget = (id: string) => {
+    if (id === t1) { setT1(t2); setT2(""); }
+    else if (id === t2) { setT2(""); }
+    else if (!t1) { setT1(id); }
+    else if (!t2) { setT2(id); }
+  };
+
   const submit = () => {
     if (kind === "note") onRecord(note ? { kind: "note", text: note } : { kind: "none" });
     else if (kind === "link") {
@@ -272,11 +279,33 @@ function StepCard({
               <TargetSelect alive={alive} value={t1} onChange={setT1} />
             </div>
           ) : kind === "kill" && step.prompt.includes("TWO victims") ? (
-            <div className="flex flex-col gap-7 sm:flex-row sm:gap-7">
-              <TargetSelect alive={alive} value={t1} onChange={setT1} disabledId={t2} />
-              <div className="hidden sm:block w-px bg-border" />
-              <div className="sm:hidden h-px bg-border" />
-              <TargetSelect alive={alive.filter((p) => p.id !== t1)} value={t2} onChange={setT2} disabledId={t1} />
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs text-muted-foreground">
+                Select victims ({[t1, t2].filter(Boolean).length}/2)
+              </span>
+              <div className="flex flex-wrap gap-1" role="group" aria-label="Victims">
+                {alive.map((p) => {
+                  const slot = p.id === t1 ? 1 : p.id === t2 ? 2 : 0;
+                  const bothFull = !!t1 && !!t2;
+                  return (
+                    <Button
+                      key={p.id}
+                      size="xs"
+                      variant={slot ? "destructive" : "outline"}
+                      onClick={() => toggleKillTarget(p.id)}
+                      disabled={!slot && bothFull}
+                      className={cn(!slot && bothFull && "opacity-40")}
+                    >
+                      {slot > 0 && (
+                        <span className="mr-0.5 inline-flex size-3.5 items-center justify-center rounded-full bg-background/30 text-[9px] font-bold leading-none">
+                          {slot}
+                        </span>
+                      )}
+                      {p.name}
+                    </Button>
+                  );
+                })}
+              </div>
             </div>
           ) : (
             <TargetSelect alive={alive} value={t1} onChange={setT1} />
@@ -300,12 +329,10 @@ function TargetSelect({
   alive,
   value,
   onChange,
-  disabledId,
 }: {
   alive: Player[];
   value: string;
   onChange: (v: string) => void;
-  disabledId?: string;
 }) {
   return (
     <div className="flex flex-wrap gap-1" role="group" aria-label="Target">
@@ -315,8 +342,6 @@ function TargetSelect({
           size="xs"
           variant={value === p.id ? "default" : "outline"}
           onClick={() => onChange(value === p.id ? "" : p.id)}
-          disabled={p.id === disabledId}
-          className={p.id === disabledId ? "opacity-40" : ""}
         >
           {p.name}
         </Button>
