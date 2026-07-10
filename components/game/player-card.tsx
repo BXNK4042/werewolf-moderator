@@ -82,6 +82,7 @@ export function PlayerCard({
             <span className={cn("truncate text-sm font-medium", !player.alive && "line-through")}>
               {player.name}
             </span>
+            <br/>
             <span className="truncate text-xs text-muted-foreground">
               {role?.name ?? "—"}
             </span>
