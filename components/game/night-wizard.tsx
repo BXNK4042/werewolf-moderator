@@ -9,6 +9,7 @@ import { useGame } from "@/lib/hooks/use-game";
 import { getRole } from "@/lib/game/roles";
 import { WOLVES, VAMPIRES } from "@/lib/game/engine";
 import type { NightOutcome, NightStep, Player, RoleId } from "@/lib/game/types";
+import { roleArt } from "@/lib/game/role-art";
 
 // ponytail: maps a step's role to the outcome picker UI. The night queue is
 // moderator-driven and reorderable, so an imperfect kind never breaks a game —
@@ -161,6 +162,30 @@ function stepLabel(step: NightStep): string {
   return getRole(step.roleId).name;
 }
 
+function RoleArtCard({ roleId }: { roleId: RoleId }) {
+  const role = getRole(roleId);
+  const art = roleArt(roleId);
+
+  return (
+    <div className="relative aspect-[3/4] w-24 overflow-hidden rounded-lg ring-1 ring-foreground/10 shadow-elevated flex-shrink-0">
+      {art ? (
+        <img src={art} alt={role.name} loading="lazy" className="absolute inset-0 size-full object-cover" />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted">
+          <span className="text-xl font-semibold text-muted-foreground">
+            {role.name.charAt(0)}
+          </span>
+        </div>
+      )}
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent px-1.5 pb-1 pt-4">
+        <span className="line-clamp-1 text-xs font-medium text-white">
+          {role.name}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function StepCard({
   step,
   alive,
@@ -197,61 +222,66 @@ function StepCard({
 
   return (
     <div className="flex flex-col gap-2 rounded-lg bg-card p-3 shadow-elevated ring-1 ring-foreground/5">
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-semibold">{stepLabel(step)}</span>
-        {step.outcome ? (
-          <Badge variant={recorded ? "default" : "outline"}>
-            {recorded ? "done" : "skipped"}
-          </Badge>
-        ) : (
-          <Badge variant="secondary">pending</Badge>
-        )}
-      </div>
-      <p className="text-xs text-muted-foreground">{step.prompt}</p>
+      <div className="flex gap-3">
+        <RoleArtCard roleId={step.roleId} />
+        <div className="flex flex-1 flex-col gap-2">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-sm font-semibold">{stepLabel(step)}</span>
+            {step.outcome ? (
+              <Badge variant={recorded ? "default" : "outline"}>
+                {recorded ? "done" : "skipped"}
+              </Badge>
+            ) : (
+              <Badge variant="secondary">pending</Badge>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground">{step.prompt}</p>
 
-      {kind === "note" ? (
-        <input
-          className="rounded border border-border bg-background px-2 py-1 text-xs"
-          placeholder="note (optional)"
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-        />
-      ) : kind === "link" ? (
-        <div className="flex flex-col gap-1.5 sm:flex-row">
-          <TargetSelect alive={alive} value={t1} onChange={setT1} />
-          <TargetSelect alive={alive} value={t2} onChange={setT2} />
-        </div>
-      ) : kind === "witch" ? (
-        <div className="flex flex-col gap-1.5">
-          <div className="flex gap-1">
-            <Button
-              size="xs"
-              variant={witchMode === "heal" ? "default" : "outline"}
-              onClick={() => setWitchMode("heal")}
-            >
-              Heal
+          {kind === "note" ? (
+            <input
+              className="rounded border border-border bg-background px-2 py-1 text-xs"
+              placeholder="note (optional)"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
+          ) : kind === "link" ? (
+            <div className="flex flex-col gap-1.5 sm:flex-row">
+              <TargetSelect alive={alive} value={t1} onChange={setT1} />
+              <TargetSelect alive={alive} value={t2} onChange={setT2} />
+            </div>
+          ) : kind === "witch" ? (
+            <div className="flex flex-col gap-1.5">
+              <div className="flex gap-1">
+                <Button
+                  size="xs"
+                  variant={witchMode === "heal" ? "default" : "outline"}
+                  onClick={() => setWitchMode("heal")}
+                >
+                  Heal
+                </Button>
+                <Button
+                  size="xs"
+                  variant={witchMode === "kill" ? "destructive" : "outline"}
+                  onClick={() => setWitchMode("kill")}
+                >
+                  Kill
+                </Button>
+              </div>
+              <TargetSelect alive={alive} value={t1} onChange={setT1} />
+            </div>
+          ) : (
+            <TargetSelect alive={alive} value={t1} onChange={setT1} />
+          )}
+
+          <div className="flex gap-1.5">
+            <Button size="sm" onClick={submit}>
+              <Check className="size-3.5" /> Record
             </Button>
-            <Button
-              size="xs"
-              variant={witchMode === "kill" ? "destructive" : "outline"}
-              onClick={() => setWitchMode("kill")}
-            >
-              Kill
+            <Button size="sm" variant="ghost" onClick={() => onRecord({ kind: "none" })}>
+              <SkipForward className="size-3.5" /> Skip
             </Button>
           </div>
-          <TargetSelect alive={alive} value={t1} onChange={setT1} />
         </div>
-      ) : (
-        <TargetSelect alive={alive} value={t1} onChange={setT1} />
-      )}
-
-      <div className="flex gap-1.5">
-        <Button size="sm" onClick={submit}>
-          <Check className="size-3.5" /> Record
-        </Button>
-        <Button size="sm" variant="ghost" onClick={() => onRecord({ kind: "none" })}>
-          <SkipForward className="size-3.5" /> Skip
-        </Button>
       </div>
     </div>
   );
