@@ -125,7 +125,7 @@ function RoleTile({ roleId, team }: { roleId: RoleId; team: Team }) {
           dispatch({ type: "removeRole", roleId });
         }}
         className={cn(
-          "absolute top-1 left-1 size-7 rounded-full shadow transition-opacity",
+          "absolute bottom-1 right-1 size-9 rounded-full shadow transition-opacity",
           count > 0 ? "opacity-100" : "pointer-events-none opacity-0",
         )}
       >
