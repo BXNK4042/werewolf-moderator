@@ -51,20 +51,20 @@ export function PlayerCard({
         !player.alive && "opacity-50",
       )}
     >
-      <div className="flex gap-2.5">
-        <div className="relative aspect-[3/4] w-20 shrink-0 overflow-hidden rounded-md ring-1 ring-foreground/10 shadow-sm">
+      <div className="flex flex-col gap-2">
+        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md ring-1 ring-foreground/10 shadow-sm">
           {role && art ? (
             <img src={art} alt={role.name} loading="lazy" className="absolute inset-0 size-full object-cover" />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-muted">
-              <span className="text-2xl font-semibold text-muted-foreground">
+              <span className="text-3xl font-semibold text-muted-foreground">
                 {role?.name.charAt(0) ?? player.name.charAt(0)}
               </span>
             </div>
           )}
           {!player.alive && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-              <X className="size-8 text-destructive" strokeWidth={3} />
+              <X className="size-10 text-destructive" strokeWidth={3} />
             </div>
           )}
           {role && (
@@ -72,18 +72,16 @@ export function PlayerCard({
               <span className={cn("size-2 rounded-full", TEAM_DOT[role.team])} />
             </span>
           )}
+          <span className="absolute right-1 top-1 shrink-0 rounded-full bg-black/50 px-1.5 py-0.5 text-[0.65rem] font-medium text-white backdrop-blur-sm">
+            {seat}
+          </span>
         </div>
 
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div>
-            <div className="flex items-center justify-between gap-1">
-              <span className={cn("truncate text-sm font-medium", !player.alive && "line-through")}>
-                {player.name}
-              </span>
-              <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                {seat}
-              </span>
-            </div>
+            <span className={cn("truncate text-sm font-medium", !player.alive && "line-through")}>
+              {player.name}
+            </span>
             <span className="truncate text-xs text-muted-foreground">
               {role?.name ?? "—"}
             </span>
